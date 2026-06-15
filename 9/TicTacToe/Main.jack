@@ -1,0 +1,26 @@
+class Main {
+    function void main() {
+        var Game game;
+        
+        // The standard Screen, Output, and Keyboard classes must be initialized
+        // for the entire operating system, but in a simple context like this,
+        // we assume they are initialized or their initializers are called here.
+        
+        // Note: For a true OS environment, these are usually initialized by OS.init.
+        // If your environment requires explicit calls:
+        // do Screen.init(); 
+        // do Output.init();
+        // do Keyboard.init();
+
+        // Instantiate the game
+        let game = Game.new();
+
+        // Run the game
+        do game.play();
+        
+        // Dispose of the game object when finished
+        do game.dispose();
+
+        return;
+    }
+}

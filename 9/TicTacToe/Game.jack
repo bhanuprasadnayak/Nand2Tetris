@@ -1,0 +1,199 @@
+class Game {
+    field Array board;     
+    field int turn;        
+    field boolean gameOver;
+
+    field int xStart;  
+    field int yStart;  
+    field int cellSize; 
+
+    constructor Game new() {
+        let board = Array.new(9); 
+        let turn = 0;             
+        let gameOver = false; 
+
+        let xStart = 150; 
+        let yStart = 30;  
+        let cellSize = 70; 
+
+        return this;
+    }
+
+    method void dispose() {
+        do board.dispose();
+        return;
+    }
+
+    method void play() {
+        var int key;
+        var int move;
+        var boolean validMove;
+        
+        do Screen.clearScreen();
+        do Screen.setColor(true);
+        do Output.printString("TIC TAC TOE");
+        do Output.println();
+        do Output.println();
+
+        while (~gameOver) {
+            do drawBoard();
+            let validMove = false;
+
+            if (turn = 0) {
+                do Output.printString("Your move (1-9): ");
+                
+                while (~validMove) {
+                    // key is int, resolving the type conflict for arithmetic
+                    let key = Keyboard.readChar(); 
+                    
+                    let move = key - 48; // Arithmetic conversion (e.g., 49 - 48 = 1)
+
+                    if (((move > 0) & (move < 10)) & (board[move - 1] = 0)) {
+                        let board[move - 1] = 1; 
+                        let validMove = true;
+                    } 
+                    else {
+                        do Output.printString("Invalid or occupied. Try again: ");
+                    }
+                } 
+
+                if (isWinner(1)) {
+                    do drawBoard();
+                    do Output.printString("You win!");
+                    let gameOver = true;
+                } else {
+                    let turn = 1; 
+                }
+            } else {
+                do randomMove();
+                
+                if (isWinner(2)) {
+                    do drawBoard();
+                    do Output.printString("Computer wins!");
+                    let gameOver = true;
+                } else {
+                    let turn = 0; 
+                }
+            }
+
+            if (~gameOver) {
+                if (~hasEmpty()) {
+                    do drawBoard();
+                    do Output.printString("It's a draw!");
+                    let gameOver = true;
+                }
+            }
+        }
+        
+        do Output.println();
+        do Output.printString("Game over. Press any key to exit...");
+        do Keyboard.readChar(); 
+
+        return;
+    }
+
+    method void mapIndexToCoords(int index, Array coords) {
+        var int row, col, xCenter, yCenter;
+        
+        let row = index / 3;
+        let col = index - (row * 3); 
+        
+        let xCenter = xStart + (col * cellSize) + (cellSize / 2);
+        let yCenter = yStart + (row * cellSize) + (cellSize / 2);
+
+        let coords[0] = xCenter;
+        let coords[1] = yCenter;
+
+        return;
+    }
+
+    method void drawBoard() {
+        var int i;
+        var Array coords;
+        var int x, y, size, halfSize;
+
+        let i = 0;
+        let coords = Array.new(2); 
+        let size = cellSize;
+        let halfSize = size / 2;
+
+        do Screen.clearScreen();
+        do Screen.setColor(true); 
+
+        do Screen.drawLine(xStart + size, yStart, xStart + size, yStart + (size * 3)); 
+        do Screen.drawLine(xStart + (size * 2), yStart, xStart + (size * 2), yStart + (size * 3)); 
+        do Screen.drawLine(xStart, yStart + size, xStart + (size * 3), yStart + size); 
+        do Screen.drawLine(xStart, yStart + (size * 2), xStart + (size * 3), yStart + (size * 2)); 
+
+        while (i < 9) {
+            do mapIndexToCoords(i, coords);
+            let x = coords[0];
+            let y = coords[1];
+
+            if (board[i] = 1) {
+                do Screen.drawLine(x - halfSize + 5, y - halfSize + 5, x + halfSize - 5, y + halfSize - 5);
+                do Screen.drawLine(x - halfSize + 5, y + halfSize - 5, x + halfSize - 5, y - halfSize + 5);
+            } else {
+                if (board[i] = 2) {
+                    do Screen.drawCircle(x, y, halfSize - 5);
+                } 
+            }
+
+            let i = i + 1;
+        }
+
+        do coords.dispose(); 
+        return;
+    }
+
+    method boolean isWinner(int player) {
+        var Array b;
+        let b = board;
+
+        if (
+            ((b[0] = player) & (b[1] = player) & (b[2] = player)) | 
+            ((b[3] = player) & (b[4] = player) & (b[5] = player)) | 
+            ((b[6] = player) & (b[7] = player) & (b[8] = player)) | 
+            ((b[0] = player) & (b[3] = player) & (b[6] = player)) | 
+            ((b[1] = player) & (b[4] = player) & (b[7] = player)) | 
+            ((b[2] = player) & (b[5] = player) & (b[8] = player)) | 
+            ((b[0] = player) & (b[4] = player) & (b[8] = player)) | 
+            ((b[2] = player) & (b[4] = player) & (b[6] = player))   
+        ) {
+            return true;
+        }
+
+        return false;
+    }
+
+    method boolean hasEmpty() {
+        var int i;
+        let i = 0;
+        while (i < 9) {
+            if (board[i] = 0) { 
+                return true;
+            }
+            let i = i + 1;
+        }
+        return false;
+    }
+
+    method void randomMove() {
+        var int pos;
+        let pos = 0; // Start search from the first spot (index 0)
+
+        // Loop through the board (0 to 8) to find the first empty spot.
+        // We stop the search if a spot is found, or if we reach the end (pos=9).
+        while (pos < 9) { 
+            if (board[pos] = 0) {
+                let board[pos] = 2; // Place 'O' (Computer's mark)
+                return; // Exit the method immediately after making a move
+            }
+            let pos = pos + 1;
+        }
+
+        // If the loop completes without a return, it means the board is full (a draw), 
+        // but this should be checked by hasEmpty() before calling this method.
+        return;
+    }
+}
