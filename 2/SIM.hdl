@@ -1,0 +1,24 @@
+CHIP SIM {
+IN a[16];
+OUT out1[8], out2[8], out;
+PARTS:
+
+
+MyOr(a=a[15],b=false,out=out);
+MyOr(a=a[0],b=false,out=out1[0]);
+MyOr(a=a[1],b=false,out=out1[1]);
+MyOr(a=a[2],b=false,out=out1[2]);
+MyOr(a=a[3],b=false,out=out1[3]);
+MyOr(a=a[4],b=false,out=out1[4]);
+MyOr(a=a[5],b=false,out=out1[5]);
+MyOr(a=a[6],b=false,out=out1[6]);
+MyOr(a=a[7],b=false,out=out1[7]);
+MyOr(a=a[8],b=false,out=out2[0]);
+MyOr(a=a[9],b=false,out=out2[1]);
+MyOr(a=a[10],b=false,out=out2[2]);
+MyOr(a=a[11],b=false,out=out2[3]);
+MyOr(a=a[12],b=false,out=out2[4]);
+MyOr(a=a[13],b=false,out=out2[5]);
+MyOr(a=a[14],b=false,out=out2[6]);
+MyOr(a=a[15],b=false,out=out2[7]);
+}
